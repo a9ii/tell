@@ -112,6 +112,5 @@ Pull requests and suggestions are welcome!
 
 > ❤️ If you find this project helpful, consider starring it on GitHub!
 
-```
 
 
