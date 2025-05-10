@@ -1,78 +1,118 @@
 
 
-# 🤖 بوت الرسائل المجهولة على تيليجرام
+# 🤖 Anonymous Message Bot for Telegram
 
-بوت تلقّي ونشر رسائل مجهولة الهوية إلى قناة تيليجرام، مع دعم التفاعل عبر الرموز التعبيرية وتتبُّع كل مستخدم على حدة.
+A Telegram bot that receives anonymous messages via private chat and posts them to a designated channel. It supports emoji-based reactions (❤️ / 😂 / 😢), stores interaction data in JSON, and ensures only channel followers can send messages.
 
-## 💡 المميزات
+---
 
-- ✉️ استقبال رسائل نصيّة من المستخدمين في الخاص ونشرها مجهولة في قناة محددة.
-- 👁️‍🗨️ توجيه نسخة من الرسالة للأدمن لعرض هوية المرسِل (للمراجعة فقط).
-- ❤️ 😂 😢 دعم ثلاث تفاعلات لكل رسالة مع عدّادات محدثة.
-- 🗳️ صوت واحد فقط لكل مستخدم لكل رسالة، ويمكنه تغييره لاحقًا.
-- 🧾 تخزين بيانات التفاعل في ملف JSON محلي.
-- ✅ لا يمكن إرسال الرسائل إلا من قبل متابعي القناة فقط.
-- 🔐 لا يدعم المحتوى غير النصي لضمان الخصوصية والوضوح.
+## ✨ Features
 
-## 🛠️ المتطلبات
+- **Anonymous Submissions:** Users send text messages privately; the bot reposts them anonymously in a public channel.
+- **Admin Forwarding:** Each submission is forwarded to the admin with the sender's identity (for moderation).
+- **Emoji Reactions:** Messages include three interactive emojis with counters (❤️ / 😂 / 😢).
+- **One Vote per User:** Each user can react once per message; reactions can be changed.
+- **JSON Persistence:** All reactions and votes are saved in a local JSON file.
+- **Subscription Check:** Only users who follow the target channel can send messages.
+- **Simple Interaction:** Commands are minimal; message content must be plain text.
 
-- Python 3.8 أو أحدث
-- مكتبة `pyTelegramBotAPI`
+---
 
-يمكن تثبيت المتطلبات عبر:
+## 📦 Requirements
+
+- Python 3.8+
+- `pyTelegramBotAPI` (aka `telebot`)
+
+Install dependencies with:
 
 ```bash
 pip install pyTelegramBotAPI
+````
 
+---
 
-## 📦 طريقة الاستخدام
+## ⚙️ Configuration
 
-1. **انسخ الرمز البرمجي** إلى ملف `bot.py`.
+Edit the following variables at the top of `bot.py`:
 
-2. **أنشئ ملف بيئة `.env`** (أو استخدم متغيرات بيئية) يتضمن:
+```python
+BOT_TOKEN = os.getenv("BOT_TOKEN", "<YOUR_TOKEN>")
+ADMIN_ID = 123456789                 # Telegram user ID of the admin
+TARGET_CHANNEL_ID = -1001234567890  # Must include -100 prefix
+REACTION_FILE = Path("reactions.json")
+```
 
-   ```env
-   BOT_TOKEN=ضع_رمز_التوكن_هنا
-   ```
+Ensure your bot is:
 
-3. **عدّل الإعدادات** في بداية الملف:
+* Added to the channel as an **admin**.
+* Granted permission to **post messages** and **read channel member status**.
 
-   * `ADMIN_ID`: معرف الأدمن (للتوجيه).
-   * `TARGET_CHANNEL_ID`: معرف القناة (تأكد من أن يبدأ بـ `-100`).
+You may use a `.env` file or environment variables for `BOT_TOKEN`.
 
-4. **اجعل البوت مشرفًا في القناة** مع صلاحية نشر الرسائل وقراءة العضوية.
+---
 
-5. **شغّل البوت:**
+## 🚀 Running the Bot
 
 ```bash
 python bot.py
 ```
 
-## 🧠 الأوامر المدعومة
+The bot will continuously poll for messages and handle incoming data.
 
-| الأمر    | الوظيفة                          |
-| -------- | -------------------------------- |
-| `/start` | رسالة ترحيبية وتعليمات الاستخدام |
-| `/id`    | إظهار معرف المستخدم أو المجموعة  |
+---
 
-## 🔐 الملاحظات الأمنية
+## 🧾 Supported Commands
 
-* يُفضَّل تشغيل البوت في بيئة معزولة أو على خادم موثوق.
-* يمكن تحسين آلية التحقق من الاشتراك بإضافة كاش أو Webhook.
+| Command  | Description                                         |
+| -------- | --------------------------------------------------- |
+| `/start` | Welcome message with usage instructions             |
+| `/id`    | Returns user ID (in private) or group ID (in group) |
 
-## 📂 هيكل التفاعل
+---
 
-يتم تخزين كل تفاعل بصيغة JSON:
+## 🧠 Reaction Data Format
+
+All message reactions are saved in a structured JSON file like this:
 
 ```json
 {
   "chat_id:message_id": {
-    "counts": {"heart": 3, "laugh": 2, "cry": 0},
-    "users": {"123456": "heart", "654321": "laugh"}
+    "counts": {
+      "heart": 5,
+      "laugh": 2,
+      "cry": 1
+    },
+    "users": {
+      "123456789": "heart",
+      "987654321": "laugh"
+    }
   }
 }
 ```
 
-## 👨‍💻 المؤلف
+This ensures durability across bot restarts and enables per-user tracking.
 
-تم تطوير هذا البوت من أجل بيئة أكاديمية (مثل طلاب نظم المعلومات)، ويمكن تعديله لأي استخدام مشابه.
+---
+
+## 🛡️ Privacy & Limitations
+
+* Only **plain text** messages are supported (to ensure anonymity and prevent media leaks).
+* Admins can identify the sender but users remain anonymous to the public.
+* Designed with privacy, simplicity, and student communities in mind (e.g. MIS departments).
+
+---
+
+## 🤝 Contributing
+
+Pull requests and suggestions are welcome!
+
+---
+
+
+
+> ❤️ If you find this project helpful, consider starring it on GitHub!
+
+```
+
+---
+
